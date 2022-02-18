@@ -7,16 +7,10 @@
 
 import Foundation
 
-class ToDoViewModel: ObservableObject {
+struct ToDoViewModel: Identifiable {
+    let id = UUID()
     let taskName: String
     let description: String?
     let profile: Profile
     let deadline: Date?
-
-    init(taskName: String, description: String? = nil, profile: Profile, deadline: Date? = nil) {
-        self.taskName = taskName
-        self.description = description
-        self.profile = profile
-        self.deadline = deadline
-    }
 }

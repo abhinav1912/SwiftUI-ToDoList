@@ -16,8 +16,10 @@ struct ToDoView: View {
     var body: some View {
         NavigationView() {
             List(todos) { todo in
-                HStack {
-                    Text(todo.taskName)
+                NavigationLink(destination: Text(todo.taskName).font(.largeTitle)) {
+                    HStack {
+                        Text(todo.taskName)
+                    }
                 }
             }
             .navigationBarTitle(Text("To-Do"))

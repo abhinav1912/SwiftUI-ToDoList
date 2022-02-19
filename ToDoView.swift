@@ -8,14 +8,10 @@
 import SwiftUI
 
 struct ToDoView: View {
-    var todos: [ToDo] = [
-        ToDo(taskName: "Task 1", description: nil, profile: .work, deadline: nil),
-        ToDo(taskName: "Task 2", description: nil, profile: .work, deadline: nil),
-        ToDo(taskName: "Task 3", description: nil, profile: .work, deadline: nil)
-    ]
+    var viewModel: ToDoViewModel = ToDoViewModel()
     var body: some View {
         NavigationView() {
-            List(todos) { todo in
+            List(viewModel.todos) { todo in
                 NavigationLink(destination: Text(todo.taskName).font(.largeTitle)) {
                     HStack {
                         Text(todo.taskName)

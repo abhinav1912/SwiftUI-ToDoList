@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct ToDoView: View {
-    var todos: [ToDoViewModel] = [
-        ToDoViewModel(taskName: "Task 1", description: nil, profile: .work, deadline: nil),
-        ToDoViewModel(taskName: "Task 2", description: nil, profile: .work, deadline: nil),
-        ToDoViewModel(taskName: "Task 3", description: nil, profile: .work, deadline: nil)
+    var todos: [ToDo] = [
+        ToDo(taskName: "Task 1", description: nil, profile: .work, deadline: nil),
+        ToDo(taskName: "Task 2", description: nil, profile: .work, deadline: nil),
+        ToDo(taskName: "Task 3", description: nil, profile: .work, deadline: nil)
     ]
     var body: some View {
         NavigationView() {

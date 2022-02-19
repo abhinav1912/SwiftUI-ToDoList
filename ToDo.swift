@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ToDoViewModel: Identifiable {
+struct ToDo: Identifiable {
     let id = UUID()
     let taskName: String
     let description: String?

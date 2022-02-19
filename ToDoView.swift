@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ToDoView: View {
-    var viewModel: ToDoViewModel = ToDoViewModel()
+    @StateObject var viewModel: ToDoViewModel = ToDoViewModel()
     var body: some View {
         ZStack {
             NavigationView() {
@@ -25,7 +25,15 @@ struct ToDoView: View {
                 Spacer()
                 HStack {
                     Spacer()
-                    Button(action: {}, label: {
+                    Button(action: {
+                        self.viewModel.addTodo(
+                            ToDo(
+                                taskName: "New Task",
+                                description: nil,
+                                profile: .work,
+                                deadline: nil
+                            ))},
+                           label: {
                         Text("+")
                             .font(.largeTitle)
                             .frame(width: 77, height: 70)

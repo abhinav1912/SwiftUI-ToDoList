@@ -14,4 +14,9 @@ class ToDoViewModel: ObservableObject {
         ToDo(taskName: "Task 2", description: nil, profile: .work, deadline: nil),
         ToDo(taskName: "Task 3", description: nil, profile: .work, deadline: nil)
     ]
+
+    func addTodo(_ todo: ToDo) {
+        self.todos.append(todo)
+        print(self.todos)
+    }
 }

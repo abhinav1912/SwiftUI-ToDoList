@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ToDoView: View {
     @StateObject var viewModel: ToDoViewModel = ToDoViewModel()
+    @State var showingSheet: Bool = false
     var body: some View {
         ZStack {
             NavigationView() {
@@ -26,13 +27,8 @@ struct ToDoView: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        self.viewModel.addTodo(
-                            ToDo(
-                                taskName: "New Task",
-                                description: nil,
-                                profile: .work,
-                                deadline: nil
-                            ))},
+                        self.showingSheet.toggle()
+                    },
                            label: {
                         Text("+")
                             .font(.largeTitle)
@@ -52,6 +48,9 @@ struct ToDoView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: $showingSheet, onDismiss: nil, content: {
+            DetailedTodoView()
+        })
     }
 }
 

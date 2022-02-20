@@ -7,9 +7,13 @@
 
 import Foundation
 
-enum Profile {
+enum Profile: String, CaseIterable, Identifiable {
     case work
     case personal
     case leisure
     case other
+    var description: String {
+        return self.rawValue
+    }
+    var id: Profile { self }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ToDo: Identifiable {
+struct ToDo: Identifiable, Equatable {
     let id = UUID()
     let taskName: String
     let description: String?

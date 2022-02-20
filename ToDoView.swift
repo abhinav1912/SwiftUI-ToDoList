@@ -59,3 +59,9 @@ struct ToDoView_Previews: PreviewProvider {
         ToDoView()
     }
 }
+
+enum ViewingMode: Equatable {
+    case editing(todo: ToDo)
+    case adding
+    case viewing
+}

@@ -49,7 +49,7 @@ struct ToDoView: View {
             }
         }
         .fullScreenCover(isPresented: $showingSheet, onDismiss: nil, content: {
-            DetailedTodoView()
+            DetailedTodoView(delegate: self.viewModel)
         })
     }
 }

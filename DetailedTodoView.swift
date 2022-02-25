@@ -16,6 +16,7 @@ struct DetailedTodoView: View {
     @State var deadline: Date = .now
     @State var viewingMode: ViewingMode = .adding
     @State private var selection = Profile.work
+    weak var delegate: ToDoViewModel?
 
     var body: some View {
         NavigationView {
@@ -66,11 +67,28 @@ struct DetailedTodoView: View {
                 })
                 ToolbarItem(placement: .navigationBarTrailing, content: {
                     Button("Add") {
-
+                        if self.isValidTodo(){
+                            delegate?.addTodo(self.getToDo())
+                            dismiss()
+                        }
                     }
                 })
             }
         }
     }
+
+    private func isValidTodo() -> Bool {
+        if self.title.isEmpty {
+            return false
+        }
+        return true
+    }
+
+    private func getToDo() -> ToDo {
+        return ToDo(taskName: self.title, description: nil, profile: self.profile, deadline: nil)
+    }
 }
 
+enum ToDoError: Error {
+    case missingTitle
+}

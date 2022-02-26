@@ -17,6 +17,7 @@ struct DetailedTodoView: View {
     @State var viewingMode: ViewingMode = .adding
     @State private var selection = Profile.work
     @State var presentAlert: Bool = false
+    @State var cancellationAlert: Bool = false
     @State private var currentError: ToDoError? = nil
     weak var delegate: ToDoViewModel?
 
@@ -61,11 +62,25 @@ struct DetailedTodoView: View {
                 Spacer()
             }
             .alert(currentError?.rawValue ?? "Add missing properties", isPresented: $presentAlert, actions: {})
+            .alert("Confirm cancellation", isPresented: $cancellationAlert, actions: {
+                Button("Cancel", role: .cancel, action: {
+                    cancellationAlert = false
+                })
+                Button("Continue", role: .destructive, action: {
+                    dismiss()
+                })
+            }, message: {
+                Text("All data will be lost")
+            })
             .navigationTitle(Text("New Task"))
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading, content: {
                     Button("Cancel") {
-                        dismiss()
+                        if self.title.isEmpty {
+                            dismiss()
+                        } else {
+                            self.cancellationAlert = true
+                        }
                     }
                 })
                 ToolbarItem(placement: .navigationBarTrailing, content: {

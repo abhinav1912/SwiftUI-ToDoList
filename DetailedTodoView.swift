@@ -16,6 +16,8 @@ struct DetailedTodoView: View {
     @State var deadline: Date = .now
     @State var viewingMode: ViewingMode = .adding
     @State private var selection = Profile.work
+    @State var presentAlert: Bool = false
+    @State private var currentError: ToDoError? = nil
     weak var delegate: ToDoViewModel?
 
     var body: some View {
@@ -58,6 +60,7 @@ struct DetailedTodoView: View {
                 }
                 Spacer()
             }
+            .alert(currentError?.rawValue ?? "Add missing properties", isPresented: $presentAlert, actions: {})
             .navigationTitle(Text("New Task"))
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading, content: {
@@ -70,6 +73,8 @@ struct DetailedTodoView: View {
                         if self.isValidTodo(){
                             delegate?.addTodo(self.getToDo())
                             dismiss()
+                        } else {
+                            self.presentAlert = true
                         }
                     }
                 })
@@ -79,8 +84,10 @@ struct DetailedTodoView: View {
 
     private func isValidTodo() -> Bool {
         if self.title.isEmpty {
+            currentError = .missingTitle
             return false
         }
+        currentError = nil
         return true
     }
 
@@ -89,6 +96,6 @@ struct DetailedTodoView: View {
     }
 }
 
-enum ToDoError: Error {
-    case missingTitle
+enum ToDoError: String, Error {
+    case missingTitle = "Add a title!"
 }

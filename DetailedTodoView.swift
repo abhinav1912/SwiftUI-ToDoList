@@ -34,13 +34,16 @@ struct DetailedTodoView: View {
                         .padding()
                     HStack {
                         Text("Select profile:").font(.title2).padding()
-                        Picker("Select a paint color", selection: $selection) {
-                            ForEach(Profile.allCases) { cs in
-                                Text(cs.description.capitalized)
-                            }.font(.title)
-                        }
-                        .pickerStyle(.menu)
-                        .font(.title)
+                        Menu {
+                            Picker("Select a paint color", selection: $selection) {
+                                ForEach(Profile.allCases) { cs in
+                                    Text(cs.description.capitalized)
+                                }
+                            }
+                        } label: {
+                            Text(selection.description.capitalized)
+                                .font(.title2)
+                        }.id(selection)
                         Spacer()
                     }
                 } else {

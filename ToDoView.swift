@@ -14,7 +14,9 @@ struct ToDoView: View {
         ZStack {
             NavigationView() {
                 List(viewModel.todos, id: \.id) { todo in
-                    NavigationLink(destination: Text(todo.taskName).font(.largeTitle)) {
+                    NavigationLink(
+                        destination: DetailedToDoView(todo: todo, delegate: self.viewModel)
+                    ) {
                         HStack {
                             Text(todo.taskName)
                         }

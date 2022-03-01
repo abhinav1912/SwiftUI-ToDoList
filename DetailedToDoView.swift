@@ -18,13 +18,16 @@ struct DetailedToDoView: View {
     @State private var selection = Profile.work
     @State private var presentingSheet: Bool = false
     @State private var isEditing: Bool = false
+    @State private var cancellationAlert: Bool = false
+    @State private var presentErrorAlert: Bool = false
+    @State private var currentError: ToDoError? = nil
     weak var delegate: ToDoViewModel?
 
-    internal init(todo: ToDo, delegate: ToDoViewModel? = nil) {
+    init(todo: ToDo, delegate: ToDoViewModel? = nil) {
         self.todo = todo
         self.delegate = delegate
         self._editedTitle = State(wrappedValue: todo.taskName)
-        self.title = todo.taskName
+        self._title = State(initialValue: todo.taskName)
         self.profile = todo.profile
         if let description = todo.description {
             self.description = description.isEmpty ? "Enter description (optional)" : description
@@ -41,7 +44,6 @@ struct DetailedToDoView: View {
                 Text(description)
                     .font(.title2)
             }
-            Divider()
             HStack {
                 Text("Profile:").font(.title3).padding()
                 Text(todo.profile.description.capitalized).font(.title3)
@@ -49,21 +51,61 @@ struct DetailedToDoView: View {
             }
             Spacer()
         }
+        .alert(currentError?.rawValue ?? "Add missing properties", isPresented: $presentErrorAlert, actions: {})
+        .alert("Confirm cancellation", isPresented: $cancellationAlert, actions: {
+            Button("Cancel", role: .cancel, action: {
+                cancellationAlert = false
+            })
+            Button("Continue", role: .destructive, action: {
+                self.resetValues()
+                self.isEditing.toggle()
+            })
+        }, message: {
+            Text("All data will be lost")
+        })
         .navigationBarTitle(isEditing ? "Edit Task" : "Task Details")
         .navigationBarBackButtonHidden(isEditing)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading, content: {
                 if isEditing {
                     Button("Cancel") {
-                        self.isEditing.toggle()
+                        if self.isEdited() {
+                            self.cancellationAlert.toggle()
+                        } else {
+                            self.isEditing.toggle()
+                        }
                     }
                 }
             })
             ToolbarItem(placement: .navigationBarTrailing, content: {
-                Button("Edit") {
-                    self.isEditing.toggle()
+                Button(isEditing ? "Save" : "Edit") {
+                    if self.isValidTodo() {
+                        self.isEditing.toggle()
+                    } else {
+                        self.presentErrorAlert.toggle()
+                    }
                 }
             })
         }
+    }
+
+    private func isEdited() -> Bool {
+        if self.editedTitle != self.title {
+            return true
+        }
+        return false
+    }
+
+    private func isValidTodo() -> Bool {
+        if self.editedTitle.isEmpty {
+            currentError = .missingTitle
+            return false
+        }
+        currentError = nil
+        return true
+    }
+
+    private func resetValues() {
+        self.editedTitle = self.title
     }
 }

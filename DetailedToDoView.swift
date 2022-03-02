@@ -28,7 +28,7 @@ struct DetailedToDoView: View {
         self.delegate = delegate
         self._editedTitle = State(wrappedValue: todo.taskName)
         self._title = State(initialValue: todo.taskName)
-        self.profile = todo.profile
+        self._profile = State(initialValue: todo.profile)
         if let description = todo.description {
             self.description = description.isEmpty ? "Enter description (optional)" : description
         }
@@ -80,6 +80,9 @@ struct DetailedToDoView: View {
             ToolbarItem(placement: .navigationBarTrailing, content: {
                 Button(isEditing ? "Save" : "Edit") {
                     if self.isValidTodo() {
+                        if isEdited() {
+                            self.saveTodo()
+                        }
                         self.isEditing.toggle()
                     } else {
                         self.presentErrorAlert.toggle()
@@ -103,6 +106,11 @@ struct DetailedToDoView: View {
         }
         currentError = nil
         return true
+    }
+
+    private func saveTodo() {
+        let newTodo = ToDo(taskName: self.editedTitle, description: nil, profile: self.profile, deadline: nil)
+        self.delegate?.updateTodo(todo, withTodo: newTodo)
     }
 
     private func resetValues() {

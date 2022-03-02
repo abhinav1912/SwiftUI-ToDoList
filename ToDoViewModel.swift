@@ -17,6 +17,11 @@ class ToDoViewModel: ObservableObject {
 
     func addTodo(_ todo: ToDo) {
         self.todos.append(todo)
-        print(self.todos)
+    }
+
+    func updateTodo(_ todo: ToDo, withTodo newTodo: ToDo) {
+        if let index = self.todos.firstIndex(of: todo) {
+            todos[index] = newTodo
+        }
     }
 }

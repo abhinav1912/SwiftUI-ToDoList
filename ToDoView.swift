@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ToDoView: View {
     @StateObject var viewModel: ToDoViewModel = ToDoViewModel()
+    @State var showAddButton: Bool = true
     @State var showingSheet: Bool = false
     var body: some View {
         ZStack {
@@ -22,6 +23,16 @@ struct ToDoView: View {
                         }
                     }
                 }
+                .onAppear(perform: {
+                    withAnimation(Animation.easeOut(duration: 0.3)) {
+                        self.showAddButton = true
+                    }
+                })
+                .onDisappear(perform: {
+                    withAnimation(Animation.easeOut(duration: 0.3)) {
+                        self.showAddButton = false
+                    }
+                })
                 .navigationBarTitle(Text("To-Do"))
             }
             VStack {
@@ -48,7 +59,7 @@ struct ToDoView: View {
                             y: 3
                         )
                 }
-            }
+            }.opacity(self.showAddButton ? 1 : 0)
         }
         .fullScreenCover(isPresented: $showingSheet, onDismiss: nil, content: {
             CreateToDoView(delegate: self.viewModel)

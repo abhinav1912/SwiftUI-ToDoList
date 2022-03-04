@@ -109,7 +109,8 @@ struct DetailedToDoView: View {
     }
 
     private func saveTodo() {
-        let newTodo = ToDo(taskName: self.editedTitle, description: nil, profile: self.profile, deadline: nil)
+        var newTodo = ToDo(taskName: self.editedTitle, description: nil, profile: self.profile, deadline: nil)
+        newTodo.id = self.todo.id
         self.delegate?.updateTodo(todo, withTodo: newTodo)
     }
 

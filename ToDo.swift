@@ -8,7 +8,7 @@
 import Foundation
 
 struct ToDo: Identifiable, Equatable {
-    let id = UUID()
+    var id = UUID()
     let taskName: String
     let description: String?
     let profile: Profile

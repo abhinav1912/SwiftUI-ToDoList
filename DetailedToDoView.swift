@@ -49,6 +49,13 @@ struct DetailedToDoView: View {
                 Text(todo.profile.description.capitalized).font(.title3)
                 Spacer()
             }
+            if let deadline = todo.deadline {
+                let dateFormatter = self.getDateFormatter()
+                let date = dateFormatter.string(from: deadline)
+                Text("Deadline: \(date)")
+                    .font(.title3)
+                    .padding()
+            }
             Spacer()
         }
         .alert(currentError?.rawValue ?? "Add missing properties", isPresented: $presentErrorAlert, actions: {})
@@ -116,5 +123,11 @@ struct DetailedToDoView: View {
 
     private func resetValues() {
         self.editedTitle = self.title
+    }
+
+    private func getDateFormatter() -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMM y"
+        return formatter
     }
 }

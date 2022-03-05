@@ -13,11 +13,12 @@ struct CreateToDoView: View {
     @State private var title: String = ""
     @State private var description: String = ""
     @State private var profile: Profile = .other
-    @State private var deadline: Date = .now
     @State private var selection = Profile.work
     @State private var presentAlert: Bool = false
     @State private var cancellationAlert: Bool = false
     @State private var currentError: ToDoError? = nil
+    @State private var hasDeadline: Bool = false
+    @State private var selectedDate: Date = Date()
 
     @State var viewingMode: ViewingMode = .adding
     weak var delegate: ToDoViewModel?
@@ -45,6 +46,17 @@ struct CreateToDoView: View {
                             .font(.title2)
                     }.id(selection)
                     Spacer()
+                }
+                Toggle(isOn: $hasDeadline) {
+                    Text("Add Deadline")
+                        .font(.title2)
+                }.padding()
+                if hasDeadline {
+                    DatePicker(selection: $selectedDate, in: Date()..., displayedComponents: .date) {
+                        Text("Select a date")
+                    }
+                    .datePickerStyle(.graphical)
+                    .padding()
                 }
                 Spacer()
             }
@@ -98,7 +110,7 @@ struct CreateToDoView: View {
             taskName: self.title,
             description: self.description.isEmpty ? nil : self.description,
             profile: self.profile,
-            deadline: nil)
+            deadline: hasDeadline ? self.selectedDate : nil)
     }
 }
 

@@ -12,7 +12,6 @@ struct CreateToDoView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var title: String = ""
     @State private var description: String = ""
-    @State private var profile: Profile = .other
     @State private var selection = Profile.work
     @State private var presentAlert: Bool = false
     @State private var cancellationAlert: Bool = false
@@ -109,7 +108,7 @@ struct CreateToDoView: View {
         return ToDo(
             taskName: self.title,
             description: self.description.isEmpty ? nil : self.description,
-            profile: self.profile,
+            profile: self.selection,
             deadline: hasDeadline ? self.selectedDate : nil)
     }
 }

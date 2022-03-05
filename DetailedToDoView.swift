@@ -43,12 +43,9 @@ struct DetailedToDoView: View {
             if let description = todo.description, !description.isEmpty {
                 Text(description)
                     .font(.title2)
+                    .padding()
             }
-            HStack {
-                Text("Profile:").font(.title3).padding()
-                Text(todo.profile.description.capitalized).font(.title3)
-                Spacer()
-            }
+            Text("Profile: \(todo.profile.description.capitalized)").font(.title3).padding()
             if let deadline = todo.deadline {
                 let dateFormatter = self.getDateFormatter()
                 let date = dateFormatter.string(from: deadline)

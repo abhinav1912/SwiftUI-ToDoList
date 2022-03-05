@@ -13,6 +13,7 @@ struct DetailedToDoView: View {
     @State private var title: String = ""
     @State private var editedTitle: String
     @State private var description: String = ""
+    @State private var editedDescription: String
     @State private var profile: Profile = .other
     @State private var deadline: Date = .now
     @State private var selection = Profile.work
@@ -29,6 +30,7 @@ struct DetailedToDoView: View {
         self._editedTitle = State(wrappedValue: todo.taskName)
         self._title = State(initialValue: todo.taskName)
         self._profile = State(initialValue: todo.profile)
+        self._editedDescription = State(wrappedValue: todo.description ?? "")
         if let description = todo.description {
             self.description = description.isEmpty ? "Enter description (optional)" : description
         }
@@ -40,10 +42,16 @@ struct DetailedToDoView: View {
                 .padding()
                 .font(.title)
                 .disabled(!isEditing)
-            if let description = todo.description, !description.isEmpty {
-                Text(description)
-                    .font(.title2)
+            if isEditing {
+                TextField("Enter description (optional)", text: $editedDescription)
                     .padding()
+                    .font(.title2)
+            } else {
+                if !self.editedDescription.isEmpty {
+                    Text(self.editedDescription)
+                        .font(.title2)
+                        .padding()
+                }
             }
             Text("Profile: \(todo.profile.description.capitalized)").font(.title3).padding()
             if let deadline = todo.deadline {
@@ -83,13 +91,14 @@ struct DetailedToDoView: View {
             })
             ToolbarItem(placement: .navigationBarTrailing, content: {
                 Button(isEditing ? "Save" : "Edit") {
-                    if self.isValidTodo() {
-                        if isEdited() {
+                    if isEditing {
+                        if self.isValidTodo() && isEdited() {
                             self.saveTodo()
+                        } else {
+                            self.presentErrorAlert.toggle()
                         }
-                        self.isEditing.toggle()
                     } else {
-                        self.presentErrorAlert.toggle()
+                        self.isEditing.toggle()
                     }
                 }
             })
@@ -97,10 +106,9 @@ struct DetailedToDoView: View {
     }
 
     private func isEdited() -> Bool {
-        if self.editedTitle != self.title {
-            return true
-        }
-        return false
+        let oldAttributes = [self.title, self.description]
+        let newAttributes = [self.editedTitle, self.editedDescription]
+        return oldAttributes != newAttributes
     }
 
     private func isValidTodo() -> Bool {
@@ -113,7 +121,7 @@ struct DetailedToDoView: View {
     }
 
     private func saveTodo() {
-        var newTodo = ToDo(taskName: self.editedTitle, description: nil, profile: self.profile, deadline: nil)
+        var newTodo = ToDo(taskName: self.editedTitle, description: self.editedDescription, profile: self.profile, deadline: nil)
         newTodo.id = self.todo.id
         self.delegate?.updateTodo(todo, withTodo: newTodo)
     }

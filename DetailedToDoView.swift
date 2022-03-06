@@ -17,6 +17,7 @@ struct DetailedToDoView: View {
     @State private var editedProfile: Profile = .other
     @State private var deadline: Date = .now
     @State private var profile = Profile.work
+    @State private var addDeadline: Bool = false
     @State private var presentingSheet: Bool = false
     @State private var isEditing: Bool = false
     @State private var cancellationAlert: Bool = false
@@ -78,6 +79,19 @@ struct DetailedToDoView: View {
                 Text("Deadline: \(date)")
                     .font(.title3)
                     .padding()
+            } else {
+                if isEditing {
+                    Toggle(isOn: $addDeadline){
+                        Text("Add Deadline").font(.title2)
+                    }.padding()
+                }
+            }
+            if addDeadline {
+                DatePicker(selection: $deadline, in: Date()..., displayedComponents: .date) {
+                    Text("Select a date")
+                }
+                .datePickerStyle(.graphical)
+                .padding()
             }
             Spacer()
         }
@@ -89,6 +103,7 @@ struct DetailedToDoView: View {
             Button("Continue", role: .destructive, action: {
                 self.resetValues()
                 self.isEditing.toggle()
+                self.addDeadline = false
             })
         }, message: {
             Text("All data will be lost")
@@ -103,6 +118,7 @@ struct DetailedToDoView: View {
                             self.cancellationAlert.toggle()
                         } else {
                             self.isEditing.toggle()
+                            self.addDeadline = false
                         }
                     }
                 }
@@ -113,8 +129,11 @@ struct DetailedToDoView: View {
                         if self.isValidTodo() && isEdited() {
                             self.saveTodo()
                             self.isEditing.toggle()
+                            self.addDeadline = false
                         } else {
-                            self.presentErrorAlert.toggle()
+                            if currentError != nil {
+                                self.presentErrorAlert.toggle()
+                            }
                         }
                     } else {
                         self.isEditing.toggle()
@@ -127,7 +146,7 @@ struct DetailedToDoView: View {
     private func isEdited() -> Bool {
         let oldAttributes = [self.todo.taskName, self.todo.description, self.todo.profile.description]
         let newAttributes = [self.editedTitle, self.editedDescription, self.editedProfile.description]
-        return oldAttributes != newAttributes
+        return (oldAttributes != newAttributes || self.todo.deadline != self.deadline)
     }
 
     private func isValidTodo() -> Bool {
@@ -140,7 +159,7 @@ struct DetailedToDoView: View {
     }
 
     private func saveTodo() {
-        var newTodo = ToDo(taskName: self.editedTitle, description: self.editedDescription, profile: self.editedProfile, deadline: nil)
+        var newTodo = ToDo(taskName: self.editedTitle, description: self.editedDescription, profile: self.editedProfile, deadline: addDeadline ? self.deadline : nil)
         newTodo.id = self.todo.id
         self.delegate?.updateTodo(todo, withTodo: newTodo)
         self.todo = newTodo

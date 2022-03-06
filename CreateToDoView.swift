@@ -35,7 +35,7 @@ struct CreateToDoView: View {
                 HStack {
                     Text("Select profile:").font(.title2).padding()
                     Menu {
-                        Picker("Select a paint color", selection: $selection) {
+                        Picker("", selection: $selection) {
                             ForEach(Profile.allCases) { cs in
                                 Text(cs.description.capitalized)
                             }

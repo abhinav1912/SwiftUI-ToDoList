@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct DetailedToDoView: View {
-    var todo: ToDo
+    @State var todo: ToDo
     @State private var title: String = ""
     @State private var editedTitle: String
     @State private var description: String = ""
@@ -25,7 +25,7 @@ struct DetailedToDoView: View {
     weak var delegate: ToDoViewModel?
 
     init(todo: ToDo, delegate: ToDoViewModel? = nil) {
-        self.todo = todo
+        self._todo = State(initialValue: todo)
         self.delegate = delegate
         self._editedTitle = State(wrappedValue: todo.taskName)
         self._title = State(initialValue: todo.taskName)
@@ -125,7 +125,7 @@ struct DetailedToDoView: View {
     }
 
     private func isEdited() -> Bool {
-        let oldAttributes = [self.title, self.description, self.profile.description]
+        let oldAttributes = [self.todo.taskName, self.todo.description, self.todo.profile.description]
         let newAttributes = [self.editedTitle, self.editedDescription, self.editedProfile.description]
         return oldAttributes != newAttributes
     }
@@ -143,6 +143,7 @@ struct DetailedToDoView: View {
         var newTodo = ToDo(taskName: self.editedTitle, description: self.editedDescription, profile: self.editedProfile, deadline: nil)
         newTodo.id = self.todo.id
         self.delegate?.updateTodo(todo, withTodo: newTodo)
+        self.todo = newTodo
     }
 
     private func resetValues() {

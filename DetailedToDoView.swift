@@ -33,6 +33,9 @@ struct DetailedToDoView: View {
         self._profile = State(initialValue: todo.profile)
         self._editedProfile = State(initialValue: todo.profile)
         self._editedDescription = State(wrappedValue: todo.description ?? "")
+        if let deadline = todo.deadline {
+            self._deadline = State(initialValue: deadline)
+        }
         if let description = todo.description {
             self.description = description.isEmpty ? "Enter description (optional)" : description
         }
@@ -73,20 +76,19 @@ struct DetailedToDoView: View {
             } else {
                 Text("Profile: \(todo.profile.description.capitalized)").font(.title3).padding()
             }
+            if isEditing {
+                Toggle(isOn: $addDeadline){
+                    Text("\(self.todo.deadline != nil ? "Edit" : "Add") Deadline").font(.title2)
+                }.padding()
+            }
             if let deadline = todo.deadline {
                 let dateFormatter = self.getDateFormatter()
                 let date = dateFormatter.string(from: deadline)
                 Text("Deadline: \(date)")
                     .font(.title3)
                     .padding()
-            } else {
-                if isEditing {
-                    Toggle(isOn: $addDeadline){
-                        Text("Add Deadline").font(.title2)
-                    }.padding()
-                }
             }
-            if addDeadline {
+            if addDeadline && isEditing {
                 DatePicker(selection: $deadline, in: Date()..., displayedComponents: .date) {
                     Text("Select a date")
                 }
@@ -163,10 +165,21 @@ struct DetailedToDoView: View {
         newTodo.id = self.todo.id
         self.delegate?.updateTodo(todo, withTodo: newTodo)
         self.todo = newTodo
+        self.resetValues()
     }
 
     private func resetValues() {
-        self.editedTitle = self.title
+        self.editedTitle = todo.taskName
+        if let deadline = todo.deadline {
+            self.deadline = deadline
+            addDeadline = true
+        } else {
+            addDeadline = false
+            deadline = .now
+        }
+        self.editedProfile = todo.profile
+        self.editedDescription = todo.description ?? ""
+
     }
 
     private func getDateFormatter() -> DateFormatter {

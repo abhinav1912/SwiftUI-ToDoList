@@ -14,9 +14,9 @@ struct DetailedToDoView: View {
     @State private var editedTitle: String
     @State private var description: String = ""
     @State private var editedDescription: String
-    @State private var profile: Profile = .other
+    @State private var editedProfile: Profile = .other
     @State private var deadline: Date = .now
-    @State private var selection = Profile.work
+    @State private var profile = Profile.work
     @State private var presentingSheet: Bool = false
     @State private var isEditing: Bool = false
     @State private var cancellationAlert: Bool = false
@@ -30,6 +30,7 @@ struct DetailedToDoView: View {
         self._editedTitle = State(wrappedValue: todo.taskName)
         self._title = State(initialValue: todo.taskName)
         self._profile = State(initialValue: todo.profile)
+        self._editedProfile = State(initialValue: todo.profile)
         self._editedDescription = State(wrappedValue: todo.description ?? "")
         if let description = todo.description {
             self.description = description.isEmpty ? "Enter description (optional)" : description
@@ -53,7 +54,24 @@ struct DetailedToDoView: View {
                         .padding()
                 }
             }
-            Text("Profile: \(todo.profile.description.capitalized)").font(.title3).padding()
+            if isEditing {
+                HStack {
+                    Text("Select profile:").font(.title2).padding()
+                    Menu {
+                        Picker("", selection: $editedProfile) {
+                            ForEach(Profile.allCases) { cs in
+                                Text(cs.description.capitalized)
+                            }
+                        }
+                    } label: {
+                        Text(editedProfile.description.capitalized)
+                            .font(.title2)
+                    }.id(editedProfile)
+                    Spacer()
+                }
+            } else {
+                Text("Profile: \(todo.profile.description.capitalized)").font(.title3).padding()
+            }
             if let deadline = todo.deadline {
                 let dateFormatter = self.getDateFormatter()
                 let date = dateFormatter.string(from: deadline)
@@ -94,6 +112,7 @@ struct DetailedToDoView: View {
                     if isEditing {
                         if self.isValidTodo() && isEdited() {
                             self.saveTodo()
+                            self.isEditing.toggle()
                         } else {
                             self.presentErrorAlert.toggle()
                         }
@@ -106,8 +125,8 @@ struct DetailedToDoView: View {
     }
 
     private func isEdited() -> Bool {
-        let oldAttributes = [self.title, self.description]
-        let newAttributes = [self.editedTitle, self.editedDescription]
+        let oldAttributes = [self.title, self.description, self.profile.description]
+        let newAttributes = [self.editedTitle, self.editedDescription, self.editedProfile.description]
         return oldAttributes != newAttributes
     }
 
@@ -121,7 +140,7 @@ struct DetailedToDoView: View {
     }
 
     private func saveTodo() {
-        var newTodo = ToDo(taskName: self.editedTitle, description: self.editedDescription, profile: self.profile, deadline: nil)
+        var newTodo = ToDo(taskName: self.editedTitle, description: self.editedDescription, profile: self.editedProfile, deadline: nil)
         newTodo.id = self.todo.id
         self.delegate?.updateTodo(todo, withTodo: newTodo)
     }

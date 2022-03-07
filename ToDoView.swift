@@ -18,8 +18,18 @@ struct ToDoView: View {
                     NavigationLink(
                         destination: DetailedToDoView(todo: todo, delegate: self.viewModel)
                     ) {
-                        HStack {
-                            Text(todo.taskName)
+                        Text(todo.taskName)
+                    }
+                    .contextMenu {
+                        Button {
+
+                        } label: {
+                            Label("Edit task", systemImage: "pencil")
+                        }
+                        Button {
+
+                        } label: {
+                            Label("Delete task", systemImage: "trash")
                         }
                     }
                 }
